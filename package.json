@@ -4,7 +4,7 @@
   "description": "An npm module for text mesh and data formats",
   "main": "texmesh.js",
   "scripts": {
-    "test": "mocha texmesh.js"
+    "test": "mocha texmesh-test.js"
   },
   "repository": {
     "type": "git",

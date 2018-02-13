@@ -1,7 +1,6 @@
 const fs = require('fs');
 const zlib = require('zlib');
 
-
 function parseTexMesh(str) {
     const arr = str.split('\n').map((a) => a.split(' '));
     let i=0, j;
@@ -28,10 +27,37 @@ function parseTexMesh(str) {
     return {p: p, t: t};
 }
 
+function parseTexData(str) {
+    const arr = str.split('\n').map((a) => a.split(' '));
+    let i=0, j;
+    let nverts, ndim;
+    let d = [];
+
+    nverts = parseInt(arr[0][0]);
+    ndim = parseInt(arr[0][1])|1;
+    i++;
+    for(j=0;j<nverts;j++) {
+        d.push(arr[i].map((o) => parseFloat(o)));
+        i++;
+    }
+
+    console.log(nverts, ndim);
+    console.log(d.slice(0,10));
+
+    return d;
+}
+
 function encodeTexMesh(mesh) {
     let txstr = `${mesh.p.length} ${mesh.t.length}\n`;
     txstr += mesh.p.map((o) => o.join(' ')).join('\n');
     txstr += mesh.t.map((o) => o.join(' ')).join('\n');
+
+    return txstr;
+}
+
+function encodeTexData(data) {
+    let txstr = `${data.length} ${data[0].length|1}\n`;
+    txstr += data.map((o) => o.join(' ')).join('\n');
 
     return txstr;
 }
@@ -43,7 +69,14 @@ exports.loadTexMesh = function loadTexMesh(path) {
     return mesh;
 }
 
-exports.loadTexMeshGz = function loadTexMeshGz(path) {
+exports.loadTexData = function loadTexData(path) {
+    const tx = fs.readFileSync(path).toString();
+    const data = parseTexData(tx);
+
+    return data;
+}
+
+exports.loadTexDataGz = function loadTexDataGz(path) {
     const txgz = fs.readFileSync(path);
 
     var pr = new Promise((resolve, reject) => {
@@ -53,8 +86,8 @@ exports.loadTexMeshGz = function loadTexMeshGz(path) {
 
                 return;
             }
-            const mesh = parseTexMesh(tx.toString());
-            resolve(mesh);
+            const data = parseTexData(tx.toString());
+            resolve(data);
         });
     });
 
@@ -63,6 +96,11 @@ exports.loadTexMeshGz = function loadTexMeshGz(path) {
 
 exports.saveTexMesh = function saveTexMesh(mesh, path) {
     const txstr = encodeTexMesh(mesh);
+    fs.writeFileSync(path, txstr);
+}
+
+exports.saveTexData = function saveTexData(data, path) {
+    const txstr = encodeTexData(data);
     fs.writeFileSync(path, txstr);
 }
 
@@ -76,7 +114,24 @@ exports.saveTexMeshGz = function saveTexMeshGz(mesh, path) {
                 return;
             }
             fs.writeFileSync(path, txgz);
-            resolve("txt.gz file saved");
+            resolve("txt.gz mesh file saved");
+        });
+    });
+
+    return pr;
+}
+
+exports.saveTexDataGz = function saveTexDataGz(data, path) {
+    const txstr = encodeTexData(data);
+    const pr = new Promise((resolve, reject) => {
+        zlib.gzip(txstr, (err, txgz) => {
+            if(err) {
+                reject(err);
+
+                return;
+            }
+            fs.writeFileSync(path, txgz);
+            resolve("txt.gz data file saved");
         });
     });
 
