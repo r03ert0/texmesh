@@ -1,0 +1,24 @@
+{
+  "name": "texmesh",
+  "version": "0.0.1",
+  "description": "An npm module for text mesh and data formats",
+  "main": "texmesh.js",
+  "scripts": {
+    "test": "mocha texmesh.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/r03ert0/texmesh.git"
+  },
+  "keywords": [
+    "mesh",
+    "text",
+    "format"
+  ],
+  "author": "Roberto Toro <rto@braincatalogue.org> (http://neuroanatomy.github.io)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/r03ert0/texmesh/issues"
+  },
+  "homepage": "https://github.com/r03ert0/texmesh#readme"
+}
